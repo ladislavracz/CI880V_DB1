@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_LEN 100
+#define MAX_LINE 256
 
 void to_uppercase(char *str) {
     while (*str) {
@@ -13,48 +13,47 @@ void to_uppercase(char *str) {
 }
 
 int main() {
-    char filename[MAX_LEN];
-    char line[MAX_LEN];
+    char filename[MAX_LINE];
+    char line[MAX_LINE];
     FILE *file;
 
-    // Első sor beolvasása, ami a fájlnév lesz
-    printf("Adja meg a fájl nevét: ");
-    if (!fgets(filename, MAX_LEN, stdin)) {
-        fprintf(stderr, "Hiba a fájlnév beolvasásakor!\n");
-        return 1;
-    }
-    filename[strcspn(filename, "\n")] = '\0'; // Új sor karakter eltávolítása
-
+    // Fájlnév beolvasása
+    printf("File name: ");
+    fgets(filename, MAX_LINE, stdin);
+    filename[strcspn(filename, "\n")] = 0; // Újsor eltávolítása
+    
     // Fájl megnyitása írásra
     file = fopen(filename, "w");
-    if (!file) {
-        fprintf(stderr, "Hiba a fájl megnyitásakor!\n");
+    if (file == NULL) {
+        perror("Error opening file");
         return 1;
     }
-
+    
     // Sorok beolvasása és fájlba írása
-    printf("Adja meg a neveket és Neptun kódokat (a végjel: #):\n");
     while (1) {
-        if (!fgets(line, MAX_LEN, stdin)) break;
-        if (line[0] == '#' && line[1] == '\n') break; // Végjel ellenőrzése
+        printf("Enter name and Neptun code (# to end): ");
+        fgets(line, MAX_LINE, stdin);
+        if (line[0] == '#' && line[1] == '\n') {
+            break;
+        }
         fputs(line, file);
     }
     fclose(file);
-
-    // Fájl újra megnyitása olvasásra
+    
+    // Fájl újranyitása olvasásra
     file = fopen(filename, "r");
-    if (!file) {
-        fprintf(stderr, "Hiba a fájl megnyitásakor olvasásra!\n");
+    if (file == NULL) {
+        perror("Error opening file");
         return 1;
     }
-
-    // Tartalom kiírása nagybetűvel
-    printf("\nA fájl tartalma nagybetűvel:\n");
-    while (fgets(line, MAX_LEN, file)) {
+    
+    // Tartalom visszaírása nagybetűsen
+    printf("\nContent in uppercase:\n");
+    while (fgets(line, MAX_LINE, file) != NULL) {
         to_uppercase(line);
         printf("%s", line);
     }
     fclose(file);
-
+    
     return 0;
 }
