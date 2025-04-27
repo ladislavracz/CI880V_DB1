@@ -33,7 +33,7 @@ int main() {
     while (1) {
         printf("Enter name and Neptun code (# to end): ");
         fgets(line, MAX_LINE, stdin);
-        if (line[0] == '#' && line[1] == '\n') {
+            if (line[0] == '#' && line[1] == '\n') {
             break;
         }
         fputs(line, file);
